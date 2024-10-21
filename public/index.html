@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lunch Menu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input, textarea {
+      margin: 5px 0;
+      padding: 10px;
+      width: 100%;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Enter Lunch Menu</h1>
+  <form id="lunchForm">
+    <label for="date">Date (MM-DD-YYYY):</label>
+    <input type="text" id="date" required>
+    <label for="menu">Menu:</label>
+    <textarea id="menu" rows="4" required></textarea>
+    <button type="submit">Save Lunch</button>
+  </form>
+
+  <h2>Lunches</h2>
+  <table id="lunchTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Menu</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('lunchForm');
+      const lunchTableBody = document.querySelector('#lunchTable tbody');
+
+      // Fetch and display existing lunches
+      function fetchLunches() {
+        fetch('/api/lunches')
+          .then(response => response.json())
+          .then(lunches => {
+            lunchTableBody.innerHTML = '';
+            lunches.forEach(lunch => {
+              const row = document.createElement('tr');
+              row.innerHTML = `<td>${lunch.date}</td><td>${lunch.menu}</td>`;
+              lunchTableBody.appendChild(row);
+            });
+          });
+      }
+
+      // Submit the form and save the lunch item
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const date = document.getElementById('date').value;
+        const menu = document.getElementById('menu').value;
+
+        fetch('/api/lunches', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ date, menu })
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            form.reset();
+            fetchLunches(); // Refresh the table
+          });
+      });
+
+      // Fetch lunches on page load
+      fetchLunches();
+    });
+  </script>
+</body>
+</html>
