@@ -8,8 +8,8 @@ const cron = require('node-cron');
 const app = express();
 const PORT = 3000;
 
-const screen = 'scr_709367acf3d4'
-const widget = 'blk_6716a202ecf35838fa7b56e7'
+const screen = ''
+const widget = ''
 
 // Dakboard API configuration
 const apiUrl = `https://dakboard.com/api/2/screens/${screen}/blocks/${widget}`;
